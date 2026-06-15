@@ -189,11 +189,11 @@ const NotchiIndicator = GObject.registerClass({
         this._refreshItem.connect('activate', () => this.emit('request-usage'));
         this.menu.addMenuItem(this._refreshItem);
 
-        let reset = new PopupMenu.PopupMenuItem('全部重置为待机 😴');
+        let reset = new PopupMenu.PopupMenuItem('全部重置为待机');
         reset.connect('activate', () => this.resetAll());
         this.menu.addMenuItem(reset);
 
-        let prefs = new PopupMenu.PopupMenuItem('⚙️ 设置');
+        let prefs = new PopupMenu.PopupMenuItem('设置');
         prefs.connect('activate', () => ExtensionUtils.openPrefs());
         this.menu.addMenuItem(prefs);
 
