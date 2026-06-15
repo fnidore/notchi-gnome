@@ -22,6 +22,16 @@
 
 内置 **5 个原创像素角色**，每个 6 个状态 + 一个扩展 Logo，全部 `viewBox 0 0 128 128`、`crispEdges` 像素渲染、带描边（深/浅顶栏都清晰）：
 
+<table>
+<tr>
+<td align="center"><img src="src/icons/mascots/slime/done.svg" width="60" alt="史莱姆"><br><sub>💧 史莱姆</sub></td>
+<td align="center"><img src="src/icons/mascots/linedog/done.svg" width="60" alt="豆豆"><br><sub>🐶 豆豆</sub></td>
+<td align="center"><img src="src/icons/mascots/shoujo/done.svg" width="60" alt="可可"><br><sub>👧 可可</sub></td>
+<td align="center"><img src="src/icons/mascots/loli/done.svg" width="60" alt="桃桃"><br><sub>🎀 桃桃</sub></td>
+<td align="center"><img src="src/icons/mascots/shiro/done.svg" width="60" alt="小雪"><br><sub>❄️ 小雪</sub></td>
+</tr>
+</table>
+
 | id | 名字 | 风格 |
 |---|---|---|
 | `slime` | 💧 史莱姆 | 果冻高光大眼（Logo 主视觉） |
@@ -35,6 +45,42 @@
 图标位于 `src/icons/mascots/<角色>/<状态>.svg`，design 出新图按此结构覆盖即可。
 
 > 备注：仍内置纯 emoji 兜底——任一角色图标文件缺失时自动降级显示 emoji，保证不空窗。
+
+### 6 个状态（以史莱姆为例）
+
+每个状态叠加 **姿态 + 状态色光晕 + 大点缀**，小尺寸也一眼可辨：
+
+<table>
+<tr>
+<td align="center"><img src="src/icons/mascots/slime/idle.svg" width="52" alt="idle"><br><sub>idle 待机</sub></td>
+<td align="center"><img src="src/icons/mascots/slime/thinking.svg" width="52" alt="thinking"><br><sub>thinking 思考</sub></td>
+<td align="center"><img src="src/icons/mascots/slime/working.svg" width="52" alt="working"><br><sub>working 干活</sub></td>
+<td align="center"><img src="src/icons/mascots/slime/attention.svg" width="52" alt="attention"><br><sub>attention 求关注</sub></td>
+<td align="center"><img src="src/icons/mascots/slime/done.svg" width="52" alt="done"><br><sub>done 完成</sub></td>
+<td align="center"><img src="src/icons/mascots/slime/error.svg" width="52" alt="error"><br><sub>error 出错</sub></td>
+</tr>
+</table>
+
+thinking 还有 3 个情绪变体（按 prompt 语气自动切换）：
+
+<table>
+<tr>
+<td align="center"><img src="src/icons/mascots/slime/thinking-happy.svg" width="52" alt="thinking-happy"><br><sub>😊 开心</sub></td>
+<td align="center"><img src="src/icons/mascots/slime/thinking-anxious.svg" width="52" alt="thinking-anxious"><br><sub>😰 焦虑</sub></td>
+<td align="center"><img src="src/icons/mascots/slime/thinking-confused.svg" width="52" alt="thinking-confused"><br><sub>😕 困惑</sub></td>
+</tr>
+</table>
+
+### 其它像素图标
+
+<table>
+<tr>
+<td align="center"><img src="src/icons/notchi-logo.svg" width="52" alt="logo"><br><sub>扩展 Logo</sub></td>
+<td align="center"><img src="src/icons/idle-empty.svg" width="52" alt="idle-empty"><br><sub>无会话待机</sub></td>
+<td align="center"><img src="src/icons/account.svg" width="52" alt="account"><br><sub>账号头像</sub></td>
+<td align="center"><img src="src/icons/account-stale.svg" width="52" alt="account-stale"><br><sub>账号(过期)</sub></td>
+</tr>
+</table>
 
 ## 架构
 

@@ -19,3 +19,47 @@
 .notchi-row-icon {
     margin-right: 4px;
 }
+
+/* 用量行：标签 + 分段条 + 百分比 + 重置倒计时 */
+.notchi-usage-row {
+    spacing: 8px;
+    padding: 1px 0;
+}
+
+.notchi-usage-label {
+    min-width: 42px;
+}
+
+.notchi-usage-pct {
+    min-width: 34px;
+    font-feature-settings: "tnum";
+}
+
+.notchi-usage-reset {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 11px;
+}
+
+/* 复古分段电量条 */
+.notchi-cell {
+    min-width: 7px;
+    min-height: 12px;
+    border-radius: 2px;
+    margin-right: 2px;
+}
+
+.notchi-cell-off {
+    background-color: rgba(255, 255, 255, 0.18);
+}
+
+.notchi-cell-low {
+    background-color: #7ed957;
+}
+
+.notchi-cell-mid {
+    background-color: #ffd23f;
+}
+
+.notchi-cell-high {
+    background-color: #ff5c5c;
+}

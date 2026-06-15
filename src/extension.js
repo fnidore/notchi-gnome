@@ -94,13 +94,6 @@ function fmtDur(us) {
     return `${h}时${m % 60}分`;
 }
 
-function bar(pct) {
-    if (pct === null || pct === undefined)
-        return '—';
-    const n = Math.max(0, Math.min(10, Math.round(pct / 10)));
-    return '▓'.repeat(n) + '░'.repeat(10 - n) + ` ${String(pct).padStart(3)}%`;
-}
-
 // ISO8601 时间戳 → 距现在还剩多久（如 "3天19时" / "1时28分" / "<1分"）
 function fmtRemaining(iso) {
     if (!iso)
@@ -478,8 +471,6 @@ const NotchiIndicator = GObject.registerClass({
             }
             const r5 = fmtRemaining(a.five_hour_reset);
             const r7 = fmtRemaining(a.seven_day_reset);
-            const l5 = `  5小时 ${bar(a.five_hour_pct)}${r5 ? '  ↻ ' + r5 + '后' : ''}`;
-            const l7 = `  7天   ${bar(a.seven_day_pct)}${r7 ? '  ↻ ' + r7 + '后' : ''}`;
             const acctItem = new PopupMenu.PopupMenuItem('', { reactive: false });
             const avatar = iconGicon(a.stale ? 'account-stale' : 'account');
             if (avatar) {
@@ -491,9 +482,50 @@ const NotchiIndicator = GObject.registerClass({
                 acctItem.label.text = `👤 ${name}${stale}`;
             }
             this._usageSection.addMenuItem(acctItem);
-            this._usageSection.addMenuItem(new PopupMenu.PopupMenuItem(l5, { reactive: false }));
-            this._usageSection.addMenuItem(new PopupMenu.PopupMenuItem(l7, { reactive: false }));
+            this._usageSection.addMenuItem(this._usageRow('5小时', a.five_hour_pct, r5));
+            this._usageSection.addMenuItem(this._usageRow('7天', a.seven_day_pct, r7));
         }
+    }
+
+    // 单条用量行：标签 + 复古分段电量条 + 百分比 + 重置倒计时
+    _usageRow(label, pct, resetText) {
+        const item = new PopupMenu.PopupMenuItem('', { reactive: false });
+        const box = new St.BoxLayout({ style_class: 'notchi-usage-row', x_expand: true });
+        box.add_child(new St.Label({
+            text: label, style_class: 'notchi-usage-label',
+            y_align: Clutter.ActorAlign.CENTER,
+        }));
+        box.add_child(this._segBar(pct));
+        box.add_child(new St.Label({
+            text: (pct === null || pct === undefined) ? '—' : `${pct}%`,
+            style_class: 'notchi-usage-pct',
+            y_align: Clutter.ActorAlign.CENTER,
+        }));
+        if (resetText) {
+            box.add_child(new St.Label({
+                text: `↻ ${resetText}后`, style_class: 'notchi-usage-reset',
+                y_align: Clutter.ActorAlign.CENTER,
+            }));
+        }
+        item.add_child(box);
+        return item;
+    }
+
+    // 复古分段电量条：10 格，已用占比染色（绿 <70 / 黄 70–90 / 红 ≥90）
+    _segBar(pct) {
+        const SEG = 10;
+        const box = new St.BoxLayout({ style_class: 'notchi-bar', y_align: Clutter.ActorAlign.CENTER });
+        const valid = !(pct === null || pct === undefined);
+        const filled = valid ? Math.max(0, Math.min(SEG, Math.round(pct / (100 / SEG)))) : 0;
+        const level = !valid ? ''
+            : (pct >= 90 ? 'notchi-cell-high' : pct >= 70 ? 'notchi-cell-mid' : 'notchi-cell-low');
+        for (let i = 0; i < SEG; i++) {
+            const on = i < filled;
+            box.add_child(new St.Widget({
+                style_class: 'notchi-cell ' + (on ? `notchi-cell-on ${level}` : 'notchi-cell-off'),
+            }));
+        }
+        return box;
     }
 
     // —— 音效 ——

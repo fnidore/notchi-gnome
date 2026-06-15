@@ -3,7 +3,7 @@
   "name": "Notchi 顶栏宠物",
   "description": "在 GNOME 顶栏养一只像素小宠物，实时反应 Claude Code 的干活状态：思考 / 干活 / 求关注 / 完成 / 待机。内置 5 个原创像素角色（史莱姆 / 豆豆 / 可可 / 桃桃 / 小雪）可选。通过 Claude Code hooks 把事件经 unix socket 推给本扩展，点击宠物可看会话状态、用量配额与最近事件。灵感来自 macOS 的 notchi（刘海宠物），移植到无刘海的 Ubuntu 顶栏。\n\nA GNOME top-bar pixel pet that reacts to Claude Code activity in real time via hooks over a unix socket. Ships 5 original pixel mascots. Inspired by macOS notchi.",
   "shell-version": ["42"],
-  "version": 5,
+  "version": 6,
   "settings-schema": "org.gnome.shell.extensions.notchi",
   "url": "https://github.com/fnidore/notchi-gnome"
 }
