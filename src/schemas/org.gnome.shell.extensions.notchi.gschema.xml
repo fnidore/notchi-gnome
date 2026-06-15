@@ -6,8 +6,24 @@
     <value nick="mute-terminal" value="2"/>
   </enum>
 
+  <enum id="org.gnome.shell.extensions.notchi.MascotFamily">
+    <value nick="random" value="0"/>
+    <value nick="slime" value="1"/>
+    <value nick="linedog" value="2"/>
+    <value nick="shoujo" value="3"/>
+    <value nick="loli" value="4"/>
+    <value nick="shiro" value="5"/>
+    <value nick="emoji" value="6"/>
+  </enum>
+
   <schema id="org.gnome.shell.extensions.notchi"
           path="/org/gnome/shell/extensions/notchi/">
+
+    <key name="mascot-family" enum="org.gnome.shell.extensions.notchi.MascotFamily">
+      <default>"random"</default>
+      <summary>顶栏角色</summary>
+      <description>顶栏宠物用哪个像素角色。random=每个会话分到不同角色；emoji=老式 emoji 宠物；其余为固定角色。</description>
+    </key>
 
     <key name="sound-mode" enum="org.gnome.shell.extensions.notchi.SoundMode">
       <default>"mute-terminal"</default>

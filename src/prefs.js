@@ -116,6 +116,17 @@ function fillPreferencesWindow(window) {
     const page = new Adw.PreferencesPage();
     window.add(page);
 
+    // —— 外观 ——
+    const look = new Adw.PreferencesGroup({
+        title: '外观',
+        description: '顶栏宠物用哪个像素角色（design 出品）',
+    });
+    page.add(look);
+    look.add(makeEnumRow(settings, 'mascot-family',
+        '角色', '随机 = 每个会话分到不同角色；纯 Emoji = 老式 emoji 宠物',
+        ['random', 'slime', 'linedog', 'shoujo', 'loli', 'shiro', 'emoji'],
+        ['随机（每会话不同）', '💧 史莱姆', '🐶 线条小狗', '👧 少女', '🎀 萝莉', '❄️ 白发美女', '纯 Emoji']));
+
     // —— 音效 ——
     const sound = new Adw.PreferencesGroup({
         title: '音效',

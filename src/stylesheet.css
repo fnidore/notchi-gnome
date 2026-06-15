@@ -1,4 +1,21 @@
+.notchi-box {
+    spacing: 2px;
+    padding: 0 6px;
+}
+
 .notchi-emoji {
     font-size: 14px;
-    padding: 0 6px;
+}
+
+.notchi-icon {
+    /* 图标尺寸用代码 set_icon_size 控制，这里只留微调位 */
+}
+
+.notchi-badge {
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.notchi-row-icon {
+    margin-right: 4px;
 }

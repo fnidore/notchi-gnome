@@ -35,8 +35,22 @@ const STATE_LABEL = {
     attention: '求关注', done: '完成', error: '出错',
 };
 
-// 多会话时给每个 session 分配一只不同的宠物 emoji（轮询）
+// 多会话时给每个 session 分配一只不同的宠物 emoji（轮询，emoji 模式下用）
 const PETS = ['🐱', '🐶', '🦊', '🐰', '🐼', '🐧', '🐯', '🦁', '🐸', '🐵', '🐹', '🐨'];
+
+// design 交付的像素角色家族（src/icons/mascots/<family>/<state>.svg）；random 模式下轮询分配
+const MASCOTS = ['slime', 'linedog', 'shoujo', 'loli', 'shiro'];
+
+// 角色家族 + 状态 → SVG 图标（Gio.FileIcon）；文件缺失返回 null（调用方降级到 emoji）
+function mascotGicon(family, state) {
+    if (!family || family === 'emoji' || MASCOTS.indexOf(family) < 0)
+        return null;
+    const path = GLib.build_filenamev([Me.path, 'icons', 'mascots', family, `${state}.svg`]);
+    const f = Gio.File.new_for_path(path);
+    if (!f.query_exists(null))
+        return null;
+    return new Gio.FileIcon({ file: f });
+}
 
 // 状态 + 情绪 → 表情脸。思考态按 mood 变脸。
 function faceFor(state, mood) {
@@ -113,14 +127,34 @@ const NotchiIndicator = GObject.registerClass({
         super._init(0.0, 'Notchi', false);
         this._settings = settings;
 
+        // 顶栏容器：像素图标(mascot) + emoji(降级/emoji 模式) + 多会话角标 +N
+        this._box = new St.BoxLayout({
+            style_class: 'notchi-box',
+            y_align: Clutter.ActorAlign.CENTER,
+        });
+        this._icon = new St.Icon({
+            style_class: 'notchi-icon',
+            y_align: Clutter.ActorAlign.CENTER,
+            visible: false,
+        });
+        this._icon.set_icon_size(20);
         this._emoji = new St.Label({
             text: '😴',
             y_align: Clutter.ActorAlign.CENTER,
             style_class: 'notchi-emoji',
         });
-        this.add_child(this._emoji);
+        this._badge = new St.Label({
+            text: '',
+            y_align: Clutter.ActorAlign.CENTER,
+            style_class: 'notchi-badge',
+            visible: false,
+        });
+        this._box.add_child(this._icon);
+        this._box.add_child(this._emoji);
+        this._box.add_child(this._badge);
+        this.add_child(this._box);
 
-        this._sessions = new Map();   // session_id -> {pet,state,mood,startTs,lastTs,lastEvent,doneTimer}
+        this._sessions = new Map();   // session_id -> {pet,family,state,mood,startTs,lastTs,lastEvent,doneTimer}
         this._activeId = null;
         this._petCursor = 0;
         this._pulseTimer = 0;
@@ -166,6 +200,39 @@ const NotchiIndicator = GObject.registerClass({
         return GLib.get_monotonic_time();
     }
 
+    // 按设置给新会话分配角色家族：固定角色 / random 轮询 / emoji
+    _familyForNew() {
+        const setting = this._settings.get_string('mascot-family');
+        if (setting === 'emoji')
+            return 'emoji';
+        if (setting === 'random')
+            return MASCOTS[this._petCursor % MASCOTS.length];
+        return setting; // 固定角色（slime/linedog/...）
+    }
+
+    // 设置里的角色改了 → 重算所有会话的家族并重绘
+    applyMascotSetting() {
+        const setting = this._settings.get_string('mascot-family');
+        let i = 0;
+        for (const [, s] of this._sessions) {
+            if (setting === 'emoji')
+                s.family = 'emoji';
+            else if (setting === 'random')
+                s.family = MASCOTS[i % MASCOTS.length];
+            else
+                s.family = setting;
+            i++;
+        }
+        this._refreshTopbar();
+        this._rebuildSessions();
+    }
+
+    // 无活跃会话时顶栏待机用哪个家族（固定角色就用它，否则 emoji 😴）
+    _idleFamily() {
+        const setting = this._settings.get_string('mascot-family');
+        return MASCOTS.indexOf(setting) >= 0 ? setting : 'emoji';
+    }
+
     // —— 事件入口 ——
     handleEvent(data) {
         const evt = (data && data.hook_event_name) ? data.hook_event_name : '';
@@ -184,6 +251,7 @@ const NotchiIndicator = GObject.registerClass({
         if (!s) {
             s = {
                 pet: PETS[this._petCursor % PETS.length],
+                family: this._familyForNew(),
                 state: 'idle', mood: 'neutral',
                 startTs: now, lastTs: now, lastEvent: evt, doneTimer: 0,
             };
@@ -266,16 +334,13 @@ const NotchiIndicator = GObject.registerClass({
             this._activeId = this._mostRecentId();
 
         if (!this._activeId) {
-            this._emoji.text = '😴';
+            this._showState('idle', 'neutral', this._idleFamily(), '', 0);
             this._stopPulse();
             return;
         }
         const s = this._sessions.get(this._activeId);
-        const face = faceFor(s.state, s.mood);
-        let text = `${s.pet}${face}`;
-        if (this._sessions.size > 1)
-            text += ` +${this._sessions.size - 1}`;
-        this._emoji.text = text;
+        const extra = this._sessions.size > 1 ? this._sessions.size - 1 : 0;
+        this._showState(s.state, s.mood, s.family, s.pet, extra);
 
         if (s.state === 'working' || s.state === 'thinking')
             this._startPulse();
@@ -283,15 +348,35 @@ const NotchiIndicator = GObject.registerClass({
             this._stopPulse();
     }
 
+    // 把顶栏切到指定状态：有像素图标用图标，否则降级 emoji；extra>0 显示 +N 角标
+    _showState(state, mood, family, pet, extra) {
+        if (extra > 0) {
+            this._badge.text = ` +${extra}`;
+            this._badge.visible = true;
+        } else {
+            this._badge.visible = false;
+        }
+        const gicon = mascotGicon(family, state);
+        if (gicon) {
+            this._icon.gicon = gicon;
+            this._icon.visible = true;
+            this._emoji.visible = false;
+        } else {
+            this._emoji.text = `${pet || ''}${faceFor(state, mood)}`;
+            this._emoji.visible = true;
+            this._icon.visible = false;
+        }
+    }
+
     _startPulse() {
         if (this._pulseTimer)
             return;
-        this._emoji.set_pivot_point(0.5, 0.5);
+        this._box.set_pivot_point(0.5, 0.5);
         this._pulseUp = false;
         const tick = () => {
             this._pulseUp = !this._pulseUp;
             const sc = this._pulseUp ? 1.14 : 1.0;
-            this._emoji.ease({
+            this._box.ease({
                 scale_x: sc, scale_y: sc,
                 duration: 560,
                 mode: Clutter.AnimationMode.EASE_IN_OUT_QUAD,
@@ -307,8 +392,8 @@ const NotchiIndicator = GObject.registerClass({
             GLib.source_remove(this._pulseTimer);
             this._pulseTimer = 0;
         }
-        this._emoji.remove_all_transitions();
-        this._emoji.set_scale(1.0, 1.0);
+        this._box.remove_all_transitions();
+        this._box.set_scale(1.0, 1.0);
     }
 
     // —— 面板：会话区 ——
@@ -322,10 +407,20 @@ const NotchiIndicator = GObject.registerClass({
         const arr = [...this._sessions.entries()].sort((a, b) => b[1].lastTs - a[1].lastTs);
         const now = this._now();
         for (const [, s] of arr) {
-            const face = faceFor(s.state, s.mood);
-            const label = `${s.pet}${face}  ${STATE_LABEL[s.state]} · ${fmtDur(now - s.startTs)} · ${s.lastEvent}`;
-            this._sessionSection.addMenuItem(
-                new PopupMenu.PopupMenuItem(label, { reactive: false }));
+            const gicon = mascotGicon(s.family, s.state);
+            const tail = `${STATE_LABEL[s.state]} · ${fmtDur(now - s.startTs)} · ${s.lastEvent}`;
+            if (gicon) {
+                const item = new PopupMenu.PopupMenuItem('', { reactive: false });
+                const ic = new St.Icon({ gicon, style_class: 'notchi-row-icon' });
+                ic.set_icon_size(18);
+                item.insert_child_at_index(ic, 1); // 0=ornament，放到文字前
+                item.label.text = `  ${tail}`;
+                this._sessionSection.addMenuItem(item);
+            } else {
+                const face = faceFor(s.state, s.mood);
+                this._sessionSection.addMenuItem(
+                    new PopupMenu.PopupMenuItem(`${s.pet}${face}  ${tail}`, { reactive: false }));
+            }
         }
     }
 
@@ -539,6 +634,12 @@ function enable() {
     _settings.connect('changed::quota-poll-minutes', () => {
         if (_usageTimer) { GLib.source_remove(_usageTimer); _usageTimer = 0; }
         startUsagePolling();
+    });
+
+    // 顶栏角色改了 → 重算各会话家族并重绘
+    _settings.connect('changed::mascot-family', () => {
+        if (_indicator)
+            _indicator.applyMascotSetting();
     });
 
     // 账号显示/命名改了 → 立即重拉/重绘用量
