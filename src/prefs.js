@@ -52,6 +52,59 @@ function makeEnumRow(settings, key, title, subtitle, nicks, labels) {
     return row;
 }
 
+// 角色选择行：每个选项显示该角色的像素图（done 状态）+ 名字；随机项用系统 shuffle 图标
+function makeMascotRow(settings) {
+    const ids = ['random', 'slime', 'linedog', 'shoujo', 'loli', 'shiro'];
+    const labels = {
+        random: '随机（每会话不同）',
+        slime: '史莱姆', linedog: '豆豆', shoujo: '可可', loli: '桃桃', shiro: '小雪',
+    };
+    const iconFor = (id) =>
+        id === 'random'
+            ? null
+            : GLib.build_filenamev([Me.path, 'icons', 'mascots', id, 'done.svg']);
+
+    const model = new Gtk.StringList();
+    ids.forEach(id => model.append(id)); // 存 id 字符串，显示交给 factory
+
+    const factory = new Gtk.SignalListItemFactory();
+    factory.connect('setup', (_f, item) => {
+        const box = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 10 });
+        const img = new Gtk.Image({ pixel_size: 28 });
+        const lbl = new Gtk.Label({ xalign: 0 });
+        box.append(img);
+        box.append(lbl);
+        item.set_child(box);
+    });
+    factory.connect('bind', (_f, item) => {
+        const id = item.get_item().get_string();
+        const box = item.get_child();
+        const img = box.get_first_child();
+        const lbl = img.get_next_sibling();
+        lbl.set_label(labels[id] || id);
+        const path = iconFor(id);
+        if (path)
+            img.set_from_file(path);
+        else
+            img.set_from_icon_name('media-playlist-shuffle-symbolic');
+    });
+
+    const row = new Adw.ComboRow({
+        title: '角色',
+        subtitle: '随机 = 每个会话分到不同角色',
+        model,
+        factory,
+    });
+    const cur = settings.get_string('mascot-family');
+    row.set_selected(Math.max(0, ids.indexOf(cur)));
+    row.connect('notify::selected', () => {
+        const sel = row.get_selected();
+        if (sel >= 0 && sel < ids.length)
+            settings.set_string('mascot-family', ids[sel]);
+    });
+    return row;
+}
+
 // 跑 notchi-usage.py --list 自动发现账号（不调 API，快）
 function discoverAccounts() {
     try {
@@ -122,10 +175,7 @@ function fillPreferencesWindow(window) {
         description: '顶栏宠物用哪个像素角色（design 出品）',
     });
     page.add(look);
-    look.add(makeEnumRow(settings, 'mascot-family',
-        '角色', '随机 = 每个会话分到不同角色；纯 Emoji = 老式 emoji 宠物',
-        ['random', 'slime', 'linedog', 'shoujo', 'loli', 'shiro', 'emoji'],
-        ['随机（每会话不同）', '💧 史莱姆', '🐶 豆豆', '👧 可可', '🎀 桃桃', '❄️ 小雪', '纯 Emoji']));
+    look.add(makeMascotRow(settings));
 
     // —— 音效 ——
     const sound = new Adw.PreferencesGroup({
