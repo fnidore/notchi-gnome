@@ -120,7 +120,7 @@ make clean            # 清理构建产物
 - [x] **状态区分度重做**（二轮）：6 状态叠加 姿态 + 状态色光晕 + 大点缀，小尺寸一眼可辨
 - [x] **像素账号头像** `src/icons/account.svg`（+ `account-stale.svg` 过期态）替换用量区 emoji `👤`
 - [x] **无会话待机** `src/icons/idle-empty.svg`（像素睡月）替换顶栏 emoji `😴`
-- [ ] thinking 情绪变体精灵（`thinking-happy/anxious/confused.svg`）——已写进 `docs/DESIGN_SPEC.md` 第七节，代码已前向兼容：出图放进对应目录即自动生效，缺则降级回 `thinking.svg`
+- [x] thinking 情绪变体精灵（`thinking-happy/anxious/confused.svg`，5×3=15 个）：思考态按 prompt 情绪自动切换，缺则降级回 `thinking.svg`
 - [ ] 提交 extensions.gnome.org
 - [ ] Codex 支持
 - [ ] 端点 401 时的完整 OAuth 刷新流程
