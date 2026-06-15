@@ -1,0 +1,9 @@
+{
+  "uuid": "notchi@fnidore.top",
+  "name": "Notchi 顶栏宠物",
+  "description": "在 GNOME 顶栏养一只 emoji 小宠物，实时反应 Claude Code 的干活状态：思考🤔 / 干活💪 / 求关注❓ / 完成🎉 / 待机😴。通过 Claude Code hooks 把事件经 unix socket 推给本扩展，点击宠物可看当前状态与最近事件。灵感来自 macOS 的 notchi（刘海宠物），移植到无刘海的 Ubuntu 顶栏。\n\nA GNOME top-bar emoji pet that reacts to Claude Code activity in real time via hooks over a unix socket. Inspired by macOS notchi.",
+  "shell-version": ["42"],
+  "version": 2,
+  "settings-schema": "org.gnome.shell.extensions.notchi",
+  "url": "https://github.com/fnidore/notchi-gnome"
+}

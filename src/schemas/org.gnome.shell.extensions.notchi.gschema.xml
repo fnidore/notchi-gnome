@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <enum id="org.gnome.shell.extensions.notchi.SoundMode">
+    <value nick="off" value="0"/>
+    <value nick="always" value="1"/>
+    <value nick="mute-terminal" value="2"/>
+  </enum>
+
+  <schema id="org.gnome.shell.extensions.notchi"
+          path="/org/gnome/shell/extensions/notchi/">
+
+    <key name="sound-mode" enum="org.gnome.shell.extensions.notchi.SoundMode">
+      <default>"mute-terminal"</default>
+      <summary>音效模式</summary>
+      <description>off=不播；always=总播；mute-terminal=当前窗口是终端时不播（你正盯着看就不吵）。</description>
+    </key>
+
+    <key name="enable-sentiment" type="b">
+      <default>true</default>
+      <summary>情绪分析</summary>
+      <description>根据 prompt 关键词让宠物表情喜怒哀乐（思考态显示 😊/😰/😕/🤔）。本地判断，prompt 不外发。</description>
+    </key>
+
+    <key name="enable-quota" type="b">
+      <default>true</default>
+      <summary>显示用量配额</summary>
+      <description>在展开面板显示 Claude 账号的 5 小时 / 7 天额度使用率（live 拉取，401 时降级读 abtop 文件）。</description>
+    </key>
+
+    <key name="hidden-accounts" type="as">
+      <default>[]</default>
+      <summary>隐藏的账号 id</summary>
+      <description>这些账号（id=配置目录绝对路径）不在用量面板显示，也不拉取其用量。空=显示全部自动发现的账号。</description>
+    </key>
+
+    <key name="account-names" type="s">
+      <default>'{}'</default>
+      <summary>账号自定义名字 (JSON)</summary>
+      <description>{账号id: 自定义显示名} 的 JSON 映射。未设置的账号用配置里的 displayName。</description>
+    </key>
+
+    <key name="quota-poll-minutes" type="i">
+      <default>5</default>
+      <range min="1" max="60"/>
+      <summary>用量刷新间隔（分钟）</summary>
+      <description>后台多久拉一次用量。面板打开时也会节流刷新一次。</description>
+    </key>
+
+    <key name="terminal-classes" type="as">
+      <default>['gnome-terminal-server','org.gnome.Terminal','org.gnome.Console','kgx','kitty','Alacritty','konsole','xterm','st-256color','st','wezterm','org.wezfurlong.wezterm','tilix','terminator','foot','footclient','Hyper','io.elementary.terminal','xfce4-terminal','urxvt','rxvt','qterminal','deepin-terminal','warp','contour']</default>
+      <summary>终端窗口类名</summary>
+      <description>这些 wm_class 视为终端；当 sound-mode=mute-terminal 且焦点在其中时不播音效。</description>
+    </key>
+
+  </schema>
+</schemalist>
