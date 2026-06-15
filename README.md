@@ -106,7 +106,7 @@ make clean            # 清理构建产物
 | `src/extension.js` | 主逻辑：socket 服务 + 顶栏宠物状态机 + 角色图标渲染 |
 | `src/prefs.js` | 设置界面（GTK4/Adw） |
 | `src/schemas/*.gschema.xml` | 设置项定义（角色 / 音效 / 用量 等） |
-| `src/icons/` | Logo + 5 角色 × 6 状态像素 SVG |
+| `src/icons/` | Logo + 5 角色 × 6 状态像素 SVG + 账号头像/待机图 |
 | `src/stylesheet.css` | 样式 |
 | `bin/notchi-send.py` | hook → socket 发送器（含本地情绪分析） |
 | `bin/notchi-usage.py` | live 用量拉取（独立进程） |
@@ -117,8 +117,9 @@ make clean            # 清理构建产物
 
 ## 后续（留待以后）
 
-- [ ] **状态区分度重做**：6 个状态在小尺寸下区分不明显——见 `docs/DESIGN_SPEC_V2.md` 第一节
-- [ ] **像素账号头像** `src/icons/account.svg`：替换用量区 emoji `👤`——见 `docs/DESIGN_SPEC_V2.md` 第二节
+- [x] **状态区分度重做**（二轮）：6 状态叠加 姿态 + 状态色光晕 + 大点缀，小尺寸一眼可辨
+- [x] **像素账号头像** `src/icons/account.svg`（+ `account-stale.svg` 过期态）替换用量区 emoji `👤`
+- [x] **无会话待机** `src/icons/idle-empty.svg`（像素睡月）替换顶栏 emoji `😴`
 - [ ] thinking 情绪变体精灵（`thinking-happy/anxious/confused.svg`）——已写进 `docs/DESIGN_SPEC.md` 第七节，代码已前向兼容：出图放进对应目录即自动生效，缺则降级回 `thinking.svg`
 - [ ] 提交 extensions.gnome.org
 - [ ] Codex 支持

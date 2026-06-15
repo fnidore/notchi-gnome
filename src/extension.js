@@ -52,6 +52,15 @@ function mascotGicon(family, state) {
     return new Gio.FileIcon({ file: f });
 }
 
+// 顶层独立图标（account / account-stale / idle-empty 等）；文件缺失返回 null
+function iconGicon(name) {
+    const path = GLib.build_filenamev([Me.path, 'icons', `${name}.svg`]);
+    const f = Gio.File.new_for_path(path);
+    if (!f.query_exists(null))
+        return null;
+    return new Gio.FileIcon({ file: f });
+}
+
 // 状态图标（含 thinking 情绪变体）：思考态若有 thinking-<mood>.svg 就用，否则降级回 thinking.svg
 function stateGicon(family, state, mood) {
     if (state === 'thinking' && mood && mood !== 'neutral') {
@@ -344,7 +353,16 @@ const NotchiIndicator = GObject.registerClass({
             this._activeId = this._mostRecentId();
 
         if (!this._activeId) {
-            this._showState('idle', 'neutral', this._idleFamily(), '', 0);
+            // 无会话：优先用专门的待机图（像素睡月），缺失则降级到家族 idle / emoji 😴
+            const empty = iconGicon('idle-empty');
+            if (empty) {
+                this._icon.gicon = empty;
+                this._icon.visible = true;
+                this._emoji.visible = false;
+                this._badge.visible = false;
+            } else {
+                this._showState('idle', 'neutral', this._idleFamily(), '', 0);
+            }
             this._stopPulse();
             return;
         }
@@ -462,7 +480,17 @@ const NotchiIndicator = GObject.registerClass({
             const r7 = fmtRemaining(a.seven_day_reset);
             const l5 = `  5小时 ${bar(a.five_hour_pct)}${r5 ? '  ↻ ' + r5 + '后' : ''}`;
             const l7 = `  7天   ${bar(a.seven_day_pct)}${r7 ? '  ↻ ' + r7 + '后' : ''}`;
-            this._usageSection.addMenuItem(new PopupMenu.PopupMenuItem(`👤 ${name}${stale}`, { reactive: false }));
+            const acctItem = new PopupMenu.PopupMenuItem('', { reactive: false });
+            const avatar = iconGicon(a.stale ? 'account-stale' : 'account');
+            if (avatar) {
+                const av = new St.Icon({ gicon: avatar, style_class: 'notchi-row-icon' });
+                av.set_icon_size(18);
+                acctItem.insert_child_at_index(av, 1); // 0=ornament，放到文字前
+                acctItem.label.text = `  ${name}${stale}`;
+            } else {
+                acctItem.label.text = `👤 ${name}${stale}`;
+            }
+            this._usageSection.addMenuItem(acctItem);
             this._usageSection.addMenuItem(new PopupMenu.PopupMenuItem(l5, { reactive: false }));
             this._usageSection.addMenuItem(new PopupMenu.PopupMenuItem(l7, { reactive: false }));
         }
