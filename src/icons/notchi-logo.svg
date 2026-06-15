@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- 地面投影 -->
+  <ellipse cx="64" cy="114" rx="34" ry="6" fill="#000" opacity="0.12"/>
+  <!-- 团子身体 -->
+  <path d="M64 16 C96 16 113 40 113 70 C113 102 90 116 64 116 C38 116 15 102 15 70 C15 40 32 16 64 16 Z"
+        fill="#f2b65a" stroke="#d98a2b" stroke-width="3.5"/>
+  <!-- 腮红 -->
+  <ellipse cx="38" cy="82" rx="8" ry="5" fill="#f08a6e" opacity="0.7"/>
+  <ellipse cx="90" cy="82" rx="8" ry="5" fill="#f08a6e" opacity="0.7"/>
+  <!-- 眼睛 -->
+  <circle cx="48" cy="64" r="9" fill="#3a2a14"/>
+  <circle cx="80" cy="64" r="9" fill="#3a2a14"/>
+  <circle cx="45.5" cy="61.5" r="2.8" fill="#fff"/>
+  <circle cx="77.5" cy="61.5" r="2.8" fill="#fff"/>
+  <!-- 微笑 -->
+  <path d="M46 86 Q64 104 82 86" stroke="#3a2a14" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+  <!-- 闪光 -->
+  <path d="M104 30 l2.6 6.4 6.4 2.6 -6.4 2.6 -2.6 6.4 -2.6 -6.4 -6.4 -2.6 6.4 -2.6 z" fill="#ffd23f"/>
+  <path d="M22 40 l1.7 4.2 4.2 1.7 -4.2 1.7 -1.7 4.2 -1.7 -4.2 -4.2 -1.7 4.2 -1.7 z" fill="#4aa3df"/>
+</svg>

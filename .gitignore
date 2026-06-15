@@ -1,3 +1,6 @@
 __pycache__/
 *.pyc
 src/schemas/gschemas.compiled
+previews/
+notchi-gnome.zip
+.claude/
