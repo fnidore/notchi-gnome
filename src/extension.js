@@ -52,6 +52,16 @@ function mascotGicon(family, state) {
     return new Gio.FileIcon({ file: f });
 }
 
+// 状态图标（含 thinking 情绪变体）：思考态若有 thinking-<mood>.svg 就用，否则降级回 thinking.svg
+function stateGicon(family, state, mood) {
+    if (state === 'thinking' && mood && mood !== 'neutral') {
+        const variant = mascotGicon(family, `thinking-${mood}`);
+        if (variant)
+            return variant;
+    }
+    return mascotGicon(family, state);
+}
+
 // 状态 + 情绪 → 表情脸。思考态按 mood 变脸。
 function faceFor(state, mood) {
     if (state === 'thinking') {
@@ -356,7 +366,7 @@ const NotchiIndicator = GObject.registerClass({
         } else {
             this._badge.visible = false;
         }
-        const gicon = mascotGicon(family, state);
+        const gicon = stateGicon(family, state, mood);
         if (gicon) {
             this._icon.gicon = gicon;
             this._icon.visible = true;
@@ -407,7 +417,7 @@ const NotchiIndicator = GObject.registerClass({
         const arr = [...this._sessions.entries()].sort((a, b) => b[1].lastTs - a[1].lastTs);
         const now = this._now();
         for (const [, s] of arr) {
-            const gicon = mascotGicon(s.family, s.state);
+            const gicon = stateGicon(s.family, s.state, s.mood);
             const tail = `${STATE_LABEL[s.state]} · ${fmtDur(now - s.startTs)} · ${s.lastEvent}`;
             if (gicon) {
                 const item = new PopupMenu.PopupMenuItem('', { reactive: false });

@@ -22,13 +22,13 @@
 
 内置 **5 个原创像素角色**，每个 6 个状态 + 一个扩展 Logo，全部 `viewBox 0 0 128 128`、`crispEdges` 像素渲染、带描边（深/浅顶栏都清晰）：
 
-| id | 角色 | 风格 |
+| id | 名字 | 风格 |
 |---|---|---|
 | `slime` | 💧 史莱姆 | 果冻高光大眼（Logo 主视觉） |
-| `linedog` | 🐶 线条小狗 | 极简黑线白身、招牌微笑 |
-| `shoujo` | 👧 少女 | 暖棕发 + 红蝴蝶结 |
-| `loli` | 🎀 萝莉 | 粉色双马尾、超大眼 |
-| `shiro` | ❄️ 白发美女 | 银白长发、冷蓝眼 |
+| `linedog` | 🐶 豆豆 | 极简黑线白身、豆豆眼、招牌微笑 |
+| `shoujo` | 👧 可可 | 暖棕发 + 红蝴蝶结 |
+| `loli` | 🎀 桃桃 | 粉色双马尾、超大眼 |
+| `shiro` | ❄️ 小雪 | 银白长发、冷蓝眼 |
 
 设置里「外观 → 角色」可选：**随机**（默认，每个会话分到不同角色，多会话最热闹）/ 固定某角色 / **纯 Emoji**（老式 emoji 宠物）。
 图标位于 `src/icons/mascots/<角色>/<状态>.svg`，design 出新图按此结构覆盖即可。
@@ -113,7 +113,7 @@ make clean            # 清理构建产物
 
 ## 后续（留待以后）
 
-- [ ] thinking 四情绪变体精灵（`thinking-happy/anxious/confused.svg`，设计加分项）
+- [ ] thinking 情绪变体精灵（`thinking-happy/anxious/confused.svg`）——已写进 `docs/DESIGN_SPEC.md` 第七节，代码已前向兼容：出图放进对应目录即自动生效，缺则降级回 `thinking.svg`
 - [ ] 提交 extensions.gnome.org
 - [ ] Codex 支持
 - [ ] 端点 401 时的完整 OAuth 刷新流程
