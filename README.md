@@ -1,4 +1,8 @@
-# Notchi 顶栏宠物（GNOME 42）
+<p align="center">
+  <img src="assets/logo.png" width="120" alt="Notchi">
+</p>
+
+<h1 align="center">Notchi 顶栏宠物（GNOME 42）</h1>
 
 在 GNOME 顶栏养一只**像素小宠物**，实时反应 **Claude Code** 的干活状态。
 灵感来自 macOS 的 [notchi](https://github.com/sk-ruban/notchi)（刘海宠物），移植到无刘海的 Ubuntu 顶栏。
@@ -22,15 +26,10 @@
 
 内置 **5 个原创像素角色**，每个 6 个状态 + 一个扩展 Logo，全部 `viewBox 0 0 128 128`、`crispEdges` 像素渲染、带描边（深/浅顶栏都清晰）：
 
-<table>
-<tr>
-<td align="center"><img src="src/icons/mascots/slime/done.svg" width="60" alt="史莱姆"><br><sub>💧 史莱姆</sub></td>
-<td align="center"><img src="src/icons/mascots/linedog/done.svg" width="60" alt="豆豆"><br><sub>🐶 豆豆</sub></td>
-<td align="center"><img src="src/icons/mascots/shoujo/done.svg" width="60" alt="可可"><br><sub>👧 可可</sub></td>
-<td align="center"><img src="src/icons/mascots/loli/done.svg" width="60" alt="桃桃"><br><sub>🎀 桃桃</sub></td>
-<td align="center"><img src="src/icons/mascots/shiro/done.svg" width="60" alt="小雪"><br><sub>❄️ 小雪</sub></td>
-</tr>
-</table>
+<p align="center">
+  <img src="assets/characters.png" width="640" alt="5 个像素角色">
+  <br><sub>💧 史莱姆 &nbsp;·&nbsp; 🐶 豆豆 &nbsp;·&nbsp; 👧 可可 &nbsp;·&nbsp; 🎀 桃桃 &nbsp;·&nbsp; ❄️ 小雪</sub>
+</p>
 
 | id | 名字 | 风格 |
 |---|---|---|
@@ -50,37 +49,24 @@
 
 每个状态叠加 **姿态 + 状态色光晕 + 大点缀**，小尺寸也一眼可辨：
 
-<table>
-<tr>
-<td align="center"><img src="src/icons/mascots/slime/idle.svg" width="52" alt="idle"><br><sub>idle 待机</sub></td>
-<td align="center"><img src="src/icons/mascots/slime/thinking.svg" width="52" alt="thinking"><br><sub>thinking 思考</sub></td>
-<td align="center"><img src="src/icons/mascots/slime/working.svg" width="52" alt="working"><br><sub>working 干活</sub></td>
-<td align="center"><img src="src/icons/mascots/slime/attention.svg" width="52" alt="attention"><br><sub>attention 求关注</sub></td>
-<td align="center"><img src="src/icons/mascots/slime/done.svg" width="52" alt="done"><br><sub>done 完成</sub></td>
-<td align="center"><img src="src/icons/mascots/slime/error.svg" width="52" alt="error"><br><sub>error 出错</sub></td>
-</tr>
-</table>
+<p align="center">
+  <img src="assets/states.png" width="720" alt="6 个状态">
+  <br><sub>idle 待机 &nbsp;·&nbsp; thinking 思考 &nbsp;·&nbsp; working 干活 &nbsp;·&nbsp; attention 求关注 &nbsp;·&nbsp; done 完成 &nbsp;·&nbsp; error 出错</sub>
+</p>
 
 thinking 还有 3 个情绪变体（按 prompt 语气自动切换）：
 
-<table>
-<tr>
-<td align="center"><img src="src/icons/mascots/slime/thinking-happy.svg" width="52" alt="thinking-happy"><br><sub>😊 开心</sub></td>
-<td align="center"><img src="src/icons/mascots/slime/thinking-anxious.svg" width="52" alt="thinking-anxious"><br><sub>😰 焦虑</sub></td>
-<td align="center"><img src="src/icons/mascots/slime/thinking-confused.svg" width="52" alt="thinking-confused"><br><sub>😕 困惑</sub></td>
-</tr>
-</table>
+<p align="center">
+  <img src="assets/thinking.png" width="380" alt="thinking 情绪变体">
+  <br><sub>😊 开心 &nbsp;·&nbsp; 😰 焦虑 &nbsp;·&nbsp; 😕 困惑</sub>
+</p>
 
 ### 其它像素图标
 
-<table>
-<tr>
-<td align="center"><img src="src/icons/notchi-logo.svg" width="52" alt="logo"><br><sub>扩展 Logo</sub></td>
-<td align="center"><img src="src/icons/idle-empty.svg" width="52" alt="idle-empty"><br><sub>无会话待机</sub></td>
-<td align="center"><img src="src/icons/account.svg" width="52" alt="account"><br><sub>账号头像</sub></td>
-<td align="center"><img src="src/icons/account-stale.svg" width="52" alt="account-stale"><br><sub>账号(过期)</sub></td>
-</tr>
-</table>
+<p align="center">
+  <img src="assets/icons.png" width="500" alt="其它像素图标">
+  <br><sub>扩展 Logo &nbsp;·&nbsp; 无会话待机 &nbsp;·&nbsp; 账号头像 &nbsp;·&nbsp; 账号(过期)</sub>
+</p>
 
 ## 架构
 
