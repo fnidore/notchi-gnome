@@ -54,4 +54,8 @@ render "$ICONS/account.svg"       ic_acct.png
 render "$ICONS/account-stale.svg" ic_accts.png
 strip icons.png "$TMP/ic_logo.png" "$TMP/ic_idle.png" "$TMP/ic_acct.png" "$TMP/ic_accts.png"
 
+echo "==> 顶部 hero logo（桃桃 done 态，透明底）"
+convert -background none "$ICONS/mascots/loli/done.svg" -resize 128x128 "$OUT/logo.png"
+echo "  -> assets/logo.png"
+
 echo "✅ 完成 -> $OUT"
