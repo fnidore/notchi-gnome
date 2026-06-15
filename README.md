@@ -30,8 +30,11 @@
 | `loli` | 🎀 桃桃 | 粉色双马尾、超大眼 |
 | `shiro` | ❄️ 小雪 | 银白长发、冷蓝眼 |
 
-设置里「外观 → 角色」可选：**随机**（默认，每个会话分到不同角色，多会话最热闹）/ 固定某角色 / **纯 Emoji**（老式 emoji 宠物）。
+设置里「外观 → 角色」可选：**随机**（默认，每个会话分到不同角色，多会话最热闹）/ 固定某角色。
+下拉每个选项直接显示该角色的像素头像 + 名字。
 图标位于 `src/icons/mascots/<角色>/<状态>.svg`，design 出新图按此结构覆盖即可。
+
+> 备注：仍内置纯 emoji 兜底——任一角色图标文件缺失时自动降级显示 emoji，保证不空窗。
 
 ## 架构
 
@@ -109,10 +112,13 @@ make clean            # 清理构建产物
 | `bin/notchi-usage.py` | live 用量拉取（独立进程） |
 | `Makefile` | 标准构建/安装/打包入口 |
 | `install.sh` / `uninstall.sh` | 安装 / 卸载底层脚本（含 settings.json 安全合并） |
-| `docs/DESIGN_SPEC.md` | 给设计师的美术交付规格 |
+| `docs/DESIGN_SPEC.md` | 给设计师的美术交付规格（一轮基础） |
+| `docs/DESIGN_SPEC_V2.md` | 美术二轮需求（状态区分度重做 / 像素账号头像 / 可优化点清单） |
 
 ## 后续（留待以后）
 
+- [ ] **状态区分度重做**：6 个状态在小尺寸下区分不明显——见 `docs/DESIGN_SPEC_V2.md` 第一节
+- [ ] **像素账号头像** `src/icons/account.svg`：替换用量区 emoji `👤`——见 `docs/DESIGN_SPEC_V2.md` 第二节
 - [ ] thinking 情绪变体精灵（`thinking-happy/anxious/confused.svg`）——已写进 `docs/DESIGN_SPEC.md` 第七节，代码已前向兼容：出图放进对应目录即自动生效，缺则降级回 `thinking.svg`
 - [ ] 提交 extensions.gnome.org
 - [ ] Codex 支持
