@@ -13,12 +13,12 @@
 
 | Claude Code Hook | 状态 | 含义 |
 |---|---|---|
-| `UserPromptSubmit` | thinking 🤔 | 思考中（接到活） |
-| `PreToolUse` / `PostToolUse` / `SubagentStop` | working 💪 | 干活中（忙碌时有脉冲呼吸动画） |
-| `Notification` | attention ❓ | 求关注（要权限 / idle） |
-| `Stop` | done 🎉 → idle | 完成（3 秒后回待机） |
-| `PreCompact` | thinking 🤔 | 压缩上下文 |
-| 空闲 | idle 😴 | 待机 |
+| `UserPromptSubmit` | thinking | 思考中（接到活） |
+| `PreToolUse` / `PostToolUse` / `SubagentStop` | working | 干活中（忙碌时有脉冲呼吸动画） |
+| `Notification` | attention | 求关注（要权限 / idle） |
+| `Stop` | done → idle | 完成（3 秒后回待机） |
+| `PreCompact` | thinking | 压缩上下文 |
+| 空闲 | idle | 待机 |
 
 点击宠物展开面板：**会话区**（每个会话的角色 / 状态 / 时长 / 最近事件）+ **用量区**（live 5h/7d 配额）+ 立即刷新 / 重置 / 设置。
 
@@ -28,16 +28,16 @@
 
 <p align="center">
   <img src="assets/characters.png" width="640" alt="5 个像素角色">
-  <br><sub>💧 史莱姆 &nbsp;·&nbsp; 🐶 豆豆 &nbsp;·&nbsp; 👧 可可 &nbsp;·&nbsp; 🎀 桃桃 &nbsp;·&nbsp; ❄️ 小雪</sub>
+  <br><sub>史莱姆 &nbsp;·&nbsp; 豆豆 &nbsp;·&nbsp; 可可 &nbsp;·&nbsp; 桃桃 &nbsp;·&nbsp; 小雪</sub>
 </p>
 
 | id | 名字 | 风格 |
 |---|---|---|
-| `slime` | 💧 史莱姆 | 果冻高光大眼（Logo 主视觉） |
-| `linedog` | 🐶 豆豆 | 极简黑线白身、豆豆眼、招牌微笑 |
-| `shoujo` | 👧 可可 | 暖棕发 + 红蝴蝶结 |
-| `loli` | 🎀 桃桃 | 粉色双马尾、超大眼 |
-| `shiro` | ❄️ 小雪 | 银白长发、冷蓝眼 |
+| `slime` | 史莱姆 | 果冻高光大眼（Logo 主视觉） |
+| `linedog` | 豆豆 | 极简黑线白身、豆豆眼、招牌微笑 |
+| `shoujo` | 可可 | 暖棕发 + 红蝴蝶结 |
+| `loli` | 桃桃 | 粉色双马尾、超大眼 |
+| `shiro` | 小雪 | 银白长发、冷蓝眼 |
 
 设置里「外观 → 角色」可选：**随机**（默认，每个会话分到不同角色，多会话最热闹）/ 固定某角色。
 下拉每个选项直接显示该角色的像素头像 + 名字。
@@ -58,7 +58,7 @@ thinking 还有 3 个情绪变体（按 prompt 语气自动切换）：
 
 <p align="center">
   <img src="assets/thinking.png" width="380" alt="thinking 情绪变体">
-  <br><sub>😊 开心 &nbsp;·&nbsp; 😰 焦虑 &nbsp;·&nbsp; 😕 困惑</sub>
+  <br><sub>开心 &nbsp;·&nbsp; 焦虑 &nbsp;·&nbsp; 困惑</sub>
 </p>
 
 ### 其它像素图标
@@ -117,7 +117,7 @@ make clean            # 清理构建产物
 - [x] 事件驱动宠物状态（思考 / 干活 / 求关注 / 完成 / 待机）
 - [x] **像素角色美术**：5 个原创角色 × 6 状态 + Logo（claude.ai/design），设置可切换或回退 emoji
 - [x] **真·脉冲动画**（Clutter，忙碌时缩放呼吸）
-- [x] **情绪分析**（`notchi-send.py` 本地关键词，emoji 模式下思考态变脸 😊/😰/😕/🤔，prompt 不外发）
+- [x] **情绪分析**（`notchi-send.py` 本地关键词，思考态随情绪变脸：开心 / 焦虑 / 困惑 / 中性，prompt 不外发）
 - [x] **多会话多宠物**（按 `session_id` 分配角色，顶栏显示 `角色 +N`）
 - [x] **展开面板**：会话区（角色/状态/时长/最近事件）+ 用量区（**live 5h/7d 配额**）
 - [x] **账号自动发现**：扫描 `~/.claude`、`~/.claude-*`，自动列出账号并读 `displayName` 当名字；设置里可逐个勾选显示/隐藏、改显示名
@@ -150,8 +150,8 @@ make clean            # 清理构建产物
 ## 后续（留待以后）
 
 - [x] **状态区分度重做**（二轮）：6 状态叠加 姿态 + 状态色光晕 + 大点缀，小尺寸一眼可辨
-- [x] **像素账号头像** `src/icons/account.svg`（+ `account-stale.svg` 过期态）替换用量区 emoji `👤`
-- [x] **无会话待机** `src/icons/idle-empty.svg`（像素睡月）替换顶栏 emoji `😴`
+- [x] **像素账号头像** `src/icons/account.svg`（+ `account-stale.svg` 过期态）替换用量区原本的 emoji 头像
+- [x] **无会话待机** `src/icons/idle-empty.svg`（像素睡月）替换顶栏原本的 emoji 待机图
 - [x] thinking 情绪变体精灵（`thinking-happy/anxious/confused.svg`，5×3=15 个）：思考态按 prompt 情绪自动切换，缺则降级回 `thinking.svg`
 - [ ] 提交 extensions.gnome.org
 - [ ] Codex 支持
