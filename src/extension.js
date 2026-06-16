@@ -79,7 +79,7 @@ function faceFor(state, mood) {
     return { idle: '😴', working: '💪', attention: '❓', done: '🎉', error: '😵' }[state] || '😴';
 }
 
-const SOUND_ID = { done: 'complete', attention: 'bell', error: 'dialog-error' };
+const SOUND_ID = { done: 'complete', attention: 'message-new-instant', error: 'dialog-error' };
 const SESSION_IDLE_TIMEOUT_US = 10 * 60 * 1000 * 1000; // 10 分钟无事件则清理
 const DONE_REVERT_SECONDS = 3;
 
@@ -171,6 +171,7 @@ const NotchiIndicator = GObject.registerClass({
         this._petCursor = 0;
         this._pulseTimer = 0;
         this._pulseUp = false;
+        this._bounceTimer = 0;
 
         this._buildMenu();
         this._refreshTopbar();
@@ -352,17 +353,19 @@ const NotchiIndicator = GObject.registerClass({
             } else {
                 this._showState('idle', 'neutral', this._idleFamily(), '', 0);
             }
-            this._stopPulse();
+            this._stopAnims();
             return;
         }
         const s = this._sessions.get(this._activeId);
         const extra = this._sessions.size > 1 ? this._sessions.size - 1 : 0;
         this._showState(s.state, s.mood, s.family, s.pet, extra);
 
-        if (s.state === 'working' || s.state === 'thinking')
+        if (s.state === 'attention')
+            this._startBounce();
+        else if (s.state === 'working' || s.state === 'thinking')
             this._startPulse();
         else
-            this._stopPulse();
+            this._stopAnims();
     }
 
     // 把顶栏切到指定状态：有像素图标用图标，否则降级 emoji；extra>0 显示 +N 角标
@@ -385,9 +388,11 @@ const NotchiIndicator = GObject.registerClass({
         }
     }
 
+    // 干活/思考：缓慢脉动（放大缩小）
     _startPulse() {
         if (this._pulseTimer)
             return;
+        this._stopAnims(); // 互斥：清掉可能在跑的蹦跳并复位
         this._box.set_pivot_point(0.5, 0.5);
         this._pulseUp = false;
         const tick = () => {
@@ -404,13 +409,40 @@ const NotchiIndicator = GObject.registerClass({
         this._pulseTimer = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 600, tick);
     }
 
-    _stopPulse() {
+    // 求关注（attention）：上下蹦跳，区别于干活的脉动，更抢眼地喊你回来操作
+    _startBounce() {
+        if (this._bounceTimer)
+            return;
+        this._stopAnims(); // 互斥：清掉可能在跑的脉动并复位
+        this._bounceDown = true;
+        const tick = () => {
+            this._bounceDown = !this._bounceDown;
+            this._box.ease({
+                translation_y: this._bounceDown ? 0 : -5,
+                duration: 240,
+                mode: this._bounceDown
+                    ? Clutter.AnimationMode.EASE_IN_QUAD   // 落下
+                    : Clutter.AnimationMode.EASE_OUT_QUAD, // 起跳
+            });
+            return GLib.SOURCE_CONTINUE;
+        };
+        tick();
+        this._bounceTimer = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 280, tick);
+    }
+
+    // 停止所有动画并复位（缩放 + 位移）
+    _stopAnims() {
         if (this._pulseTimer) {
             GLib.source_remove(this._pulseTimer);
             this._pulseTimer = 0;
         }
+        if (this._bounceTimer) {
+            GLib.source_remove(this._bounceTimer);
+            this._bounceTimer = 0;
+        }
         this._box.remove_all_transitions();
         this._box.set_scale(1.0, 1.0);
+        this._box.translation_y = 0;
     }
 
     // —— 面板：会话区 ——
@@ -549,7 +581,8 @@ const NotchiIndicator = GObject.registerClass({
         const mode = this._settings.get_string('sound-mode');
         if (mode === 'off')
             return;
-        if (mode === 'mute-terminal' && this._focusIsTerminal())
+        // attention=「等你操作」是最该提醒的时刻，即使焦点在终端也突破静音
+        if (state !== 'attention' && mode === 'mute-terminal' && this._focusIsTerminal())
             return;
         const id = SOUND_ID[state];
         if (!id)
@@ -578,7 +611,7 @@ const NotchiIndicator = GObject.registerClass({
     }
 
     destroy() {
-        this._stopPulse();
+        this._stopAnims();
         for (const [, s] of this._sessions) {
             if (s.doneTimer) GLib.source_remove(s.doneTimer);
         }
