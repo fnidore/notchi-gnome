@@ -501,12 +501,18 @@ const NotchiIndicator = GObject.registerClass({
             style_class: 'notchi-usage-pct',
             y_align: Clutter.ActorAlign.CENTER,
         }));
-        if (resetText) {
-            box.add_child(new St.Label({
-                text: `↻ ${resetText}后`, style_class: 'notchi-usage-reset',
-                y_align: Clutter.ActorAlign.CENTER,
-            }));
-        }
+        // resetText 为空 = API 没返回重置时刻（窗口利用率 0，滚动窗口还没点亮）→ 占位
+        let resetLabel;
+        if (!resetText)
+            resetLabel = '↻ 未开始';
+        else if (resetText === '可重置')
+            resetLabel = '↻ 可重置';
+        else
+            resetLabel = `↻ ${resetText}后`;
+        box.add_child(new St.Label({
+            text: resetLabel, style_class: 'notchi-usage-reset',
+            y_align: Clutter.ActorAlign.CENTER,
+        }));
         item.add_child(box);
         return item;
     }

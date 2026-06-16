@@ -14,6 +14,7 @@ token 只在本进程内存里用于请求头，不打印、不落盘。
 
 stdout: {"accounts":[{"id","name","five_hour_pct","seven_day_pct","resets_at","stale"}, ...]}
 """
+import datetime
 import glob
 import json
 import os
@@ -30,6 +31,18 @@ HOME = os.path.expanduser("~")
 def _round(v):
     try:
         return round(float(v))
+    except Exception:
+        return None
+
+
+def _unix_to_iso(ts):
+    """abtop 降级文件里的 resets_at 是 unix 秒整数，归一化成带时区(UTC) ISO 字符串，
+    与 live API 返回格式一致，扩展端 fmtRemaining 才能解析。"""
+    if not ts:
+        return None
+    try:
+        return datetime.datetime.fromtimestamp(
+            int(ts), tz=datetime.timezone.utc).isoformat()
     except Exception:
         return None
 
@@ -103,7 +116,7 @@ def fallback_abtop(config_dir):
     sd = d.get("seven_day") or {}
     return (_round(fh.get("used_percentage")),
             _round(sd.get("used_percentage")),
-            fh.get("resets_at"), sd.get("resets_at"),
+            _unix_to_iso(fh.get("resets_at")), _unix_to_iso(sd.get("resets_at")),
             d.get("updated_at"))
 
 
