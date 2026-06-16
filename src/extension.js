@@ -187,10 +187,6 @@ const NotchiIndicator = GObject.registerClass({
 
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
 
-        this._refreshItem = new PopupMenu.PopupMenuItem('立即刷新用量');
-        this._refreshItem.connect('activate', () => this.emit('request-usage'));
-        this.menu.addMenuItem(this._refreshItem);
-
         let reset = new PopupMenu.PopupMenuItem('全部重置为待机');
         reset.connect('activate', () => this.resetAll());
         this.menu.addMenuItem(reset);
@@ -481,10 +477,24 @@ const NotchiIndicator = GObject.registerClass({
             } else {
                 acctItem.label.text = `👤 ${name}${stale}`;
             }
+            acctItem.label.x_expand = true; // 名字撑开，把刷新按钮顶到行尾
+            acctItem.add_child(this._refreshButton());
             this._usageSection.addMenuItem(acctItem);
             this._usageSection.addMenuItem(this._usageRow('5小时', a.five_hour_pct, r5));
             this._usageSection.addMenuItem(this._usageRow('7天', a.seven_day_pct, r7));
         }
+    }
+
+    // 账号名字行尾的小 ↻ 刷新按钮：点击立即重新拉取所有账号用量（复用 request-usage 链路）
+    _refreshButton() {
+        const btn = new St.Button({
+            style_class: 'notchi-usage-refresh',
+            child: new St.Label({ text: '↻', y_align: Clutter.ActorAlign.CENTER }),
+            can_focus: true,
+            y_align: Clutter.ActorAlign.CENTER,
+        });
+        btn.connect('clicked', () => this.emit('request-usage'));
+        return btn;
     }
 
     // 单条用量行：标签 + 复古分段电量条 + 百分比 + 重置倒计时

@@ -40,6 +40,19 @@
     font-size: 11px;
 }
 
+/* 用量区右上角刷新按钮 */
+.notchi-usage-refresh {
+    padding: 0 7px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.notchi-usage-refresh:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
 /* 复古分段电量条 */
 .notchi-cell {
     min-width: 7px;
